@@ -4,17 +4,50 @@ import { Button, Card, Icon, Input } from "@rneui/base";
 import { primaryColor } from "../../conf/const";
 import { Controller, useForm } from "react-hook-form";
 import { LoginFormData, LoginScreenProps } from "./LoginScreen.types";
+import { auth } from "../../database/firebase.conf";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { styles } from "./LoginScreen.styles";
+import { login } from "../../store/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 export function LoginScreen({ navigation }: LoginScreenProps) {
-  const { control, handleSubmit } = useForm({
-    defaultValues: { username: "", password: "" },
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      username: "bjorn.umera@gmail.com",
+      password: "Kalapole22",
+    },
   });
+
+  const dispatch = useDispatch();
 
   const onSubmit = ({ username, password }: LoginFormData) => {
     if (username === "" || password === "") {
       Alert.alert("Check that you filled all the fields");
       return;
     }
+    signInWithEmailAndPassword(auth, username, password)
+      .then(() => {
+        console.log("Current user: ", auth.currentUser);
+        dispatch(
+          login({
+            email: auth.currentUser?.email,
+            uid: auth.currentUser?.uid,
+          }),
+        );
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-email") {
+          Alert.alert("Error", "Check your email address");
+        }
+        if (error.code === "auth/invalid-login-credentials") {
+          Alert.alert("Error", "Please check your credentials");
+        }
+        console.error(error);
+      });
   };
 
   const onCreateAccountPress = () => {};
@@ -27,24 +60,31 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
           <Controller
             render={({ field }) => (
               <Input
-                label="Username"
+                // label="Username"
                 style={styles.input}
                 placeholder="Username"
+                autoCapitalize="none"
                 onChangeText={field.onChange}
                 value={field.value}
+                errorMessage={errors.username?.message}
                 leftIcon={<Icon type="font-awesome-5" name="user" />}
               />
             )}
             control={control}
             name="username"
+            rules={{
+              required: { value: true, message: "Username is required" },
+            }}
           />
           <Controller
             render={({ field }) => (
               <Input
-                label="Password"
+                // label="Password"
                 style={styles.input}
+                autoCapitalize="none"
                 secureTextEntry={true}
                 placeholder="Password"
+                errorMessage={errors.password?.message}
                 leftIcon={<Icon type="font-awesome-5" name="lock" />}
                 onChangeText={field.onChange}
                 value={field.value}
@@ -52,6 +92,9 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
             )}
             control={control}
             name="password"
+            rules={{
+              required: { value: true, message: "Password is required" },
+            }}
           />
           <Text
             style={styles.forgotPassword}
@@ -79,41 +122,3 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: primaryColor,
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    width: "100%",
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 30,
-    marginBottom: 20,
-    fontWeight: "bold",
-    color: "white",
-    alignSelf: "flex-start",
-  },
-  card: {
-    width: "100%",
-    minHeight: "50%",
-    borderRadius: 20,
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 35,
-  },
-  forgotPassword: {
-    color: primaryColor,
-  },
-  loginButton: {
-    borderRadius: 8,
-    height: 50,
-    marginBottom: 40,
-  },
-  input: {
-    marginVertical: 15,
-  },
-});

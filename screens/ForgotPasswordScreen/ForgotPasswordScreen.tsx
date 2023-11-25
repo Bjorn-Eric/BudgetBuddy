@@ -4,6 +4,7 @@ import { Button, Card, Icon, Input } from "@rneui/base";
 import { primaryColor } from "../../conf/const";
 import { Controller, useForm } from "react-hook-form";
 import { ForgotPasswordScreenNavigationProp } from "./ForgotPasswordScreen.types";
+import { styles } from "./ForgotPasswordScreen.styles";
 
 export function ForgotPasswordScreen() {
   const { control, handleSubmit } = useForm({
@@ -48,48 +49,3 @@ export function ForgotPasswordScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: primaryColor,
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    width: "100%",
-    padding: 20,
-  },
-  welcomeText: {
-    fontSize: 30,
-    marginBottom: 10,
-    fontWeight: "bold",
-    color: "white",
-    alignSelf: "flex-start",
-  },
-  subTitle: {
-    fontSize: 25,
-    marginBottom: 20,
-    fontWeight: "bold",
-    color: "white",
-    alignSelf: "flex-start",
-  },
-  card: {
-    width: "100%",
-    minHeight: "30%",
-    borderRadius: 20,
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 35,
-  },
-  forgotPassword: {
-    color: primaryColor,
-  },
-  loginButton: {
-    borderRadius: 8,
-    height: 50,
-    marginBottom: 40,
-  },
-  input: {
-    marginVertical: 15,
-  },
-});

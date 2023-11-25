@@ -1,49 +1,24 @@
-import { StyleSheet } from "react-native";
-import { ForgotPasswordScreen } from "./screens/ForgotPasswordScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LoginScreen } from "./screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { SignUpScreen } from "./screens/SignUpScreen";
+import { auth } from "./database/firebase.conf";
+import { useEffect, useState } from "react";
+import { Router } from "./router";
+import store from "./store/store";
+import { Provider } from "react-redux";
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    return auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(user != null);
+    });
+  }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="loginScreen"
-          component={LoginScreen}
-        />
-        <Stack.Screen
-          options={{
-            headerShown: false,
-            headerBackTitle: "Back",
-            headerTitle: "",
-          }}
-          name="forgotPasswordScreen"
-          component={ForgotPasswordScreen}
-        />
-        <Stack.Screen
-          options={{
-            headerShown: false,
-            headerBackTitle: "Back",
-            headerTitle: "",
-          }}
-          name="signUpScreen"
-          component={SignUpScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Router />
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

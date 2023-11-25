@@ -1,6 +1,6 @@
 export const appName = "Budget Buddy";
 
-// Colors
-export const primaryColor = "#007BFF";
+// TODO: change colors
+export const primaryColor = "#3440eb";
 export const secondaryColor = "#ECECEC";
 export const accentColor = "#4CAF50";
